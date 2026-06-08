@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "Transferência visual de arquivos entre buckets S3 (AWS e Oracle Cloud)",
   "main": "./out/main/index.js",
-  "author": "",
+  "author": {
+    "name": "millerp",
+    "email": "millerp@users.noreply.github.com"
+  },
   "license": "MIT",
   "scripts": {
     "dev": "electron-vite dev",
@@ -53,7 +56,9 @@
       "category": "public.app-category.utilities"
     },
     "linux": {
-      "target": ["AppImage", "deb"]
+      "target": ["AppImage", "deb"],
+      "maintainer": "millerp <millerp@users.noreply.github.com>",
+      "category": "Utility"
     },
     "nsis": {
       "oneClick": false,
