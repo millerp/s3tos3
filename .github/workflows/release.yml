@@ -2,15 +2,61 @@ name: Release
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches: [master, main]
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Forçar release da versão atual (mesmo se a tag já existir)
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write
 
 jobs:
+  resolve:
+    name: Resolver versão
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.meta.outputs.version }}
+      should_build: ${{ steps.meta.outputs.should_build }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determinar versão e necessidade de release
+        id: meta
+        env:
+          FORCE: ${{ github.event_name == 'workflow_dispatch' && inputs.force }}
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/v}"
+            echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+            echo "Release por tag v${VERSION}"
+          else
+            VERSION=$(node -p "require('./package.json').version")
+            echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+            if [[ "${FORCE}" == "true" ]]; then
+              echo "should_build=true" >> "$GITHUB_OUTPUT"
+              echo "Release forçado para v${VERSION}"
+            elif git ls-remote --tags origin "refs/tags/v${VERSION}" | grep -q .; then
+              echo "should_build=false" >> "$GITHUB_OUTPUT"
+              echo "Tag v${VERSION} já existe — release ignorado."
+            else
+              echo "should_build=true" >> "$GITHUB_OUTPUT"
+              echo "Nova versão v${VERSION} — build e release serão gerados."
+            fi
+          fi
+
   build:
     name: Build (${{ matrix.name }})
+    needs: resolve
+    if: needs.resolve.outputs.should_build == 'true'
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -19,15 +65,12 @@ jobs:
           - os: windows-latest
             name: Windows
             args: --win
-            artifact: release/**/*
           - os: macos-latest
             name: macOS
             args: --mac
-            artifact: release/**/*
           - os: ubuntu-latest
             name: Linux
             args: --linux
-            artifact: release/**/*
 
     steps:
       - name: Checkout
@@ -47,7 +90,6 @@ jobs:
 
       - name: Package (${{ matrix.name }})
         env:
-          # macOS: build sem assinatura de código no CI
           CSC_IDENTITY_AUTO_DISCOVERY: false
         run: npx electron-builder ${{ matrix.args }} --publish never
 
@@ -55,23 +97,35 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: s3tos3-${{ matrix.name }}
-          path: ${{ matrix.artifact }}
+          path: release/**/*
           if-no-files-found: error
 
   release:
-    name: Publish GitHub Release
-    needs: build
+    name: Publicar GitHub Release
+    needs: [resolve, build]
+    if: needs.resolve.outputs.should_build == 'true'
     runs-on: ubuntu-latest
 
     steps:
-      - name: Download all artifacts
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
           path: artifacts
           merge-multiple: true
 
-      - name: Create GitHub Release
+      - name: List artifacts
+        run: find artifacts -type f
+
+      - name: Criar tag e publicar release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: v${{ needs.resolve.outputs.version }}
+          name: S3 to S3 v${{ needs.resolve.outputs.version }}
+          target_commitish: ${{ github.sha }}
           generate_release_notes: true
           files: artifacts/**/*
+          draft: false
+          prerelease: false
