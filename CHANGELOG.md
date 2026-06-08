@@ -1,3 +1,9 @@
+## [1.1.1](https://github.com/millerp/s3tos3/compare/v1.1.0...v1.1.1) (2026-06-08)
+
+### Bug Fixes
+
+* **ci:** corrige builds apos semantic-release no mesmo workflow ([a07bd4b](https://github.com/millerp/s3tos3/commit/a07bd4b65940b7d7c541d3373ab015730dae7dc2))
+
 ## [1.1.0](https://github.com/millerp/s3tos3/compare/v1.0.0...v1.1.0) (2026-06-08)
 
 ### Features
