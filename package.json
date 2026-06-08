@@ -1,6 +1,6 @@
 {
   "name": "s3tos3",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Transferência visual de arquivos entre buckets S3 (AWS e Oracle Cloud)",
   "main": "./out/main/index.js",
   "author": {
