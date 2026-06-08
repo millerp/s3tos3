@@ -1,3 +1,9 @@
+## [1.2.0](https://github.com/millerp/s3tos3/compare/v1.1.1...v1.2.0) (2026-06-08)
+
+### Features
+
+* criptografa credenciais salvas em profiles.json ([1eb062c](https://github.com/millerp/s3tos3/commit/1eb062cb9c7b65c0eb345ac0fbcd232867f4a3e4))
+
 ## [1.1.1](https://github.com/millerp/s3tos3/compare/v1.1.0...v1.1.1) (2026-06-08)
 
 ### Bug Fixes
