@@ -117,7 +117,9 @@
       "secretForTest": "Informe a Secret Key para testar um novo perfil",
       "saveFailed": "Erro ao salvar perfil",
       "testFailed": "Falha no teste de conexão",
-      "secretRequiredSave": "Secret Access Key é obrigatória"
+      "secretRequiredSave": "Secret Access Key é obrigatória",
+      "decryptFailed": "Não foi possível descriptografar as credenciais salvas",
+      "decryptUnavailable": "Criptografia do sistema indisponível para ler credenciais salvas"
     },
     "folder": {
       "nameRequired": "Nome da pasta é obrigatório",

@@ -117,7 +117,9 @@
       "secretForTest": "Enter Secret Key to test a new profile",
       "saveFailed": "Failed to save profile",
       "testFailed": "Connection test failed",
-      "secretRequiredSave": "Secret Access Key is required"
+      "secretRequiredSave": "Secret Access Key is required",
+      "decryptFailed": "Failed to decrypt saved credentials",
+      "decryptUnavailable": "System encryption is unavailable to read saved credentials"
     },
     "folder": {
       "nameRequired": "Folder name is required",
