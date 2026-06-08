@@ -8,6 +8,14 @@
     "email": "millerp@users.noreply.github.com"
   },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/millerp/s3tos3.git"
+  },
+  "bugs": {
+    "url": "https://github.com/millerp/s3tos3/issues"
+  },
+  "homepage": "https://github.com/millerp/s3tos3#readme",
   "scripts": {
     "dev": "electron-vite dev",
     "build": "electron-vite build && electron-builder --win",
@@ -16,7 +24,8 @@
     "build:linux": "electron-vite build && electron-builder --linux",
     "build:app": "electron-vite build",
     "preview": "electron-vite preview",
-    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.node.json"
+    "typecheck": "tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.node.json",
+    "semantic-release": "semantic-release"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.758.0",
@@ -26,15 +35,21 @@
     "zustand": "^5.0.3"
   },
   "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.6",
+    "@semantic-release/npm": "^12.0.2",
     "@tailwindcss/vite": "^4.0.9",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",
+    "conventional-changelog-conventionalcommits": "^9.3.1",
     "electron": "^34.2.0",
     "electron-builder": "^25.1.8",
     "electron-vite": "^3.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "semantic-release": "^24.2.9",
     "tailwindcss": "^4.0.9",
     "typescript": "^5.8.2",
     "vite": "^6.2.0"
@@ -49,14 +64,22 @@
       "out/**/*"
     ],
     "win": {
-      "target": ["nsis"]
+      "target": [
+        "nsis"
+      ]
     },
     "mac": {
-      "target": ["dmg", "zip"],
+      "target": [
+        "dmg",
+        "zip"
+      ],
       "category": "public.app-category.utilities"
     },
     "linux": {
-      "target": ["AppImage", "deb"],
+      "target": [
+        "AppImage",
+        "deb"
+      ],
       "maintainer": "millerp <millerp@users.noreply.github.com>",
       "category": "Utility"
     },

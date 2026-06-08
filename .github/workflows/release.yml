@@ -7,28 +7,60 @@ on:
   workflow_dispatch:
     inputs:
       force:
-        description: Forçar release da versão atual (mesmo se a tag já existir)
+        description: Forçar release da versão atual do package.json (ignora semantic-release)
         required: false
         default: false
         type: boolean
 
 permissions:
   contents: write
+  issues: write
+  pull-requests: write
 
 jobs:
-  resolve:
-    name: Resolver versão
+  semantic-release:
+    name: Semantic Release
+    if: github.event_name == 'push' && github.ref_type == 'branch' && !contains(github.event.head_commit.message, '[skip ci]')
     runs-on: ubuntu-latest
     outputs:
+      published: ${{ steps.semrel.outputs.new_release_published }}
+      version: ${{ steps.semrel.outputs.new_release_version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Executar semantic-release
+        id: semrel
+        uses: cycjimmy/semantic-release-action@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  resolve-manual:
+    name: Resolver versão (manual)
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_type == 'tag')
+    runs-on: ubuntu-latest
+    outputs:
+      published: ${{ steps.meta.outputs.published }}
       version: ${{ steps.meta.outputs.version }}
-      should_build: ${{ steps.meta.outputs.should_build }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Determinar versão e necessidade de release
+      - name: Determinar versão
         id: meta
         env:
           FORCE: ${{ github.event_name == 'workflow_dispatch' && inputs.force }}
@@ -36,27 +68,47 @@ jobs:
           if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
             VERSION="${GITHUB_REF#refs/tags/v}"
             echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-            echo "should_build=true" >> "$GITHUB_OUTPUT"
-            echo "Release por tag v${VERSION}"
-          else
+            echo "published=true" >> "$GITHUB_OUTPUT"
+          elif [[ "${FORCE}" == "true" ]]; then
             VERSION=$(node -p "require('./package.json').version")
             echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-            if [[ "${FORCE}" == "true" ]]; then
-              echo "should_build=true" >> "$GITHUB_OUTPUT"
-              echo "Release forçado para v${VERSION}"
-            elif git ls-remote --tags origin "refs/tags/v${VERSION}" | grep -q .; then
-              echo "should_build=false" >> "$GITHUB_OUTPUT"
-              echo "Tag v${VERSION} já existe — release ignorado."
-            else
-              echo "should_build=true" >> "$GITHUB_OUTPUT"
-              echo "Nova versão v${VERSION} — build e release serão gerados."
-            fi
+            echo "published=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=" >> "$GITHUB_OUTPUT"
+            echo "published=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  version:
+    name: Consolidar versão
+    needs: [semantic-release, resolve-manual]
+    if: always()
+    runs-on: ubuntu-latest
+    outputs:
+      published: ${{ steps.out.outputs.published }}
+      version: ${{ steps.out.outputs.version }}
+      manual: ${{ steps.out.outputs.manual }}
+    steps:
+      - name: Selecionar versão ativa
+        id: out
+        run: |
+          if [[ "${{ needs.semantic-release.result }}" == "success" && "${{ needs.semantic-release.outputs.published }}" == "true" ]]; then
+            echo "published=true" >> "$GITHUB_OUTPUT"
+            echo "version=${{ needs.semantic-release.outputs.version }}" >> "$GITHUB_OUTPUT"
+            echo "manual=false" >> "$GITHUB_OUTPUT"
+          elif [[ "${{ needs.resolve-manual.result }}" == "success" && "${{ needs.resolve-manual.outputs.published }}" == "true" ]]; then
+            echo "published=true" >> "$GITHUB_OUTPUT"
+            echo "version=${{ needs.resolve-manual.outputs.version }}" >> "$GITHUB_OUTPUT"
+            echo "manual=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "published=false" >> "$GITHUB_OUTPUT"
+            echo "version=" >> "$GITHUB_OUTPUT"
+            echo "manual=false" >> "$GITHUB_OUTPUT"
           fi
 
   build:
     name: Build (${{ matrix.name }})
-    needs: resolve
-    if: needs.resolve.outputs.should_build == 'true'
+    needs: version
+    if: needs.version.outputs.published == 'true'
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -84,6 +136,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: v${{ needs.version.outputs.version }}
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -109,23 +164,20 @@ jobs:
           path: ${{ matrix.artifact }}
           if-no-files-found: error
 
-  release:
-    name: Publicar GitHub Release
-    needs: [resolve, build]
-    if: needs.resolve.outputs.should_build == 'true'
+  publish:
+    name: Publicar artefatos no GitHub Release
+    needs: [version, build]
+    if: needs.version.outputs.published == 'true'
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
           path: artifacts
           merge-multiple: true
 
-      - name: Preparar arquivos do release
+      - name: Preparar instaladores
         run: |
           mkdir -p release-assets
           find artifacts -type f \( \
@@ -136,17 +188,23 @@ jobs:
             -name '*.AppImage' -o \
             -name '*.deb' \
           \) -exec cp {} release-assets/ \;
-          echo "Arquivos para release:"
           ls -lh release-assets/
 
-      - name: Criar tag e publicar release
+      - name: Criar release (somente manual sem tag prévia)
+        if: needs.version.outputs.manual == 'true'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ needs.resolve.outputs.version }}
-          name: S3 to S3 v${{ needs.resolve.outputs.version }}
-          target_commitish: ${{ github.sha }}
+          tag_name: v${{ needs.version.outputs.version }}
+          name: S3 to S3 v${{ needs.version.outputs.version }}
           generate_release_notes: true
           files: release-assets/*
           draft: false
           prerelease: false
           overwrite_files: true
+
+      - name: Anexar instaladores ao release existente
+        if: needs.version.outputs.manual != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ needs.version.outputs.version }}
+        run: gh release upload "v${VERSION}" release-assets/* --clobber
