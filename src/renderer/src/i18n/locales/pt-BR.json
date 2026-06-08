@@ -1,0 +1,144 @@
+{
+  "app": {
+    "title": "S3 to S3",
+    "subtitle": "Transfira arquivos e pastas entre AWS S3 e Oracle Cloud"
+  },
+  "common": {
+    "cancel": "Cancelar",
+    "save": "Salvar",
+    "saving": "Salvando...",
+    "create": "Criar",
+    "creating": "Criando...",
+    "refresh": "Atualizar",
+    "use": "Usar",
+    "root": "raiz",
+    "manual": "manual",
+    "loading": "Carregando...",
+    "loadingBuckets": "Carregando buckets...",
+    "edit": "Editar",
+    "delete": "Excluir",
+    "newProfile": "Novo perfil",
+    "transfer": "Transferir",
+    "copied": "Copiado para a área de transferência"
+  },
+  "language": {
+    "label": "Idioma",
+    "pt": "Português",
+    "en": "English"
+  },
+  "header": {
+    "profiles": "Perfis de conexão",
+    "ready": "Pronto",
+    "transferring": "Transferindo"
+  },
+  "pane": {
+    "source": "Origem",
+    "dest": "Destino",
+    "selectProfile": "Selecione um perfil",
+    "selectBucket": "Selecione um bucket",
+    "manageProfiles": "Gerenciar perfis",
+    "manualBucketPlaceholder": "Digite o nome do bucket manualmente"
+  },
+  "browser": {
+    "newFolder": "Nova pasta",
+    "emptyDest": "Pasta vazia — clique com botão direito ou solte arquivos aqui",
+    "emptySource": "Nenhum item nesta pasta — clique com botão direito para opções",
+    "loading": "Carregando arquivos..."
+  },
+  "contextMenu": {
+    "openFolder": "Abrir pasta",
+    "transferFile": "Transferir para destino",
+    "transferFolder": "Transferir pasta para destino",
+    "transferCurrent": "Transferir pasta atual para destino",
+    "copyS3Path": "Copiar caminho S3",
+    "copyObjectKey": "Copiar chave do objeto",
+    "refresh": "Atualizar",
+    "newFolder": "Nova pasta...",
+    "newFolderHere": "Nova pasta aqui...",
+    "goUp": "Voltar para pasta anterior",
+    "copyCurrentPath": "Copiar caminho da pasta atual",
+    "dropHint": "Solte itens aqui para transferir"
+  },
+  "createFolder": {
+    "title": "Nova pasta",
+    "nameLabel": "Nome da pasta",
+    "namePlaceholder": "minha-pasta",
+    "preview": "Será criada em:"
+  },
+  "confirmTransfer": {
+    "title": "Confirmar transferência",
+    "description": "Os itens abaixo serão copiados da origem para o destino:"
+  },
+  "transfer": {
+    "idle": "Nenhuma transferência em andamento. Arraste itens da origem para o destino.",
+    "progress": "Transferências: {{done}}/{{total}}",
+    "failures": "({{count}} falhas)",
+    "cancel": "Cancelar",
+    "status": {
+      "running": "Em andamento",
+      "completed": "Concluída",
+      "failed": "Com falhas",
+      "cancelled": "Cancelada"
+    }
+  },
+  "profile": {
+    "title": "Perfis de conexão",
+    "editTitle": "Editar perfil",
+    "name": "Nome",
+    "provider": "Provedor",
+    "aws": "AWS S3",
+    "oracle": "Oracle Cloud",
+    "accessKey": "Access Key ID",
+    "secretKey": "Secret Access Key",
+    "secretKeep": "(deixe vazio para manter)",
+    "region": "Região",
+    "regionPlaceholderAws": "us-east-1",
+    "regionPlaceholderOracle": "sa-saopaulo-1",
+    "namespace": "Namespace (tenancy)",
+    "manualBuckets": "Buckets manuais (opcional — um por linha)",
+    "manualBucketsPlaceholder": "meu-bucket\noutro-bucket",
+    "testConnection": "Testar conexão",
+    "testing": "Testando...",
+    "testSuccess": "Conexão testada com sucesso!",
+    "savedList": "Perfis salvos"
+  },
+  "errors": {
+    "unknown": "Erro desconhecido",
+    "listObjects": "Erro ao listar objetos",
+    "listBuckets": "Erro ao listar buckets",
+    "accessBucket": "Erro ao acessar bucket",
+    "createFolderSetup": "Selecione um perfil e bucket antes de criar a pasta",
+    "folderNameRequired": "Informe o nome da pasta",
+    "profile": {
+      "nameRequired": "Nome é obrigatório",
+      "accessKeyRequired": "Access Key é obrigatória",
+      "secretRequired": "Secret Key é obrigatória para novo perfil",
+      "namespaceRequired": "Namespace é obrigatório para Oracle Cloud",
+      "secretForTest": "Informe a Secret Key para testar um novo perfil",
+      "saveFailed": "Erro ao salvar perfil",
+      "testFailed": "Falha no teste de conexão",
+      "secretRequiredSave": "Secret Access Key é obrigatória"
+    },
+    "folder": {
+      "nameRequired": "Nome da pasta é obrigatório",
+      "invalidChars": "Nome da pasta não pode conter \"/\""
+    },
+    "s3": {
+      "unknown": "Erro ao acessar S3: {{detail}}",
+      "noSuchBucketOracle": "Bucket \"{{bucket}}\" não encontrado no namespace \"{{namespace}}\" (região {{region}}). Endpoint: {{endpoint}}. Verifique nome do bucket, região, compartimento e permissões IAM.",
+      "noSuchBucket": "Bucket \"{{bucket}}\" não existe ou sem permissão (região {{region}}).",
+      "accessDenied": "Sem permissão para acessar \"{{bucket}}\". Verifique credenciais e políticas IAM.",
+      "invalidCredentials": "Credenciais inválidas. Verifique Access Key e Secret Key."
+    },
+    "transfer": {
+      "setupRequired": "Configure origem e destino antes de transferir",
+      "inProgress": "Já existe uma transferência em andamento"
+    },
+    "profileNotFound": "Perfil não encontrado",
+    "oracleNamespace": "Namespace é obrigatório para Oracle Cloud"
+  },
+  "hints": {
+    "oracleEmptyBuckets": "Nenhum bucket retornado pela API S3 da Oracle. Verifique namespace, região, permissões IAM e compartimento. Informe buckets manualmente no perfil ou digite o nome abaixo.",
+    "oracleManualBuckets": "API ListBuckets não retornou buckets; usando buckets informados manualmente no perfil."
+  }
+}

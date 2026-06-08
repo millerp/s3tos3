@@ -1,0 +1,144 @@
+{
+  "app": {
+    "title": "S3 to S3",
+    "subtitle": "Transfer files and folders between AWS S3 and Oracle Cloud"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving...",
+    "create": "Create",
+    "creating": "Creating...",
+    "refresh": "Refresh",
+    "use": "Use",
+    "root": "root",
+    "manual": "manual",
+    "loading": "Loading...",
+    "loadingBuckets": "Loading buckets...",
+    "edit": "Edit",
+    "delete": "Delete",
+    "newProfile": "New profile",
+    "transfer": "Transfer",
+    "copied": "Copied to clipboard"
+  },
+  "language": {
+    "label": "Language",
+    "pt": "Português",
+    "en": "English"
+  },
+  "header": {
+    "profiles": "Connection profiles",
+    "ready": "Ready",
+    "transferring": "Transferring"
+  },
+  "pane": {
+    "source": "Source",
+    "dest": "Destination",
+    "selectProfile": "Select a profile",
+    "selectBucket": "Select a bucket",
+    "manageProfiles": "Manage profiles",
+    "manualBucketPlaceholder": "Enter bucket name manually"
+  },
+  "browser": {
+    "newFolder": "New folder",
+    "emptyDest": "Empty folder — right-click or drop files here",
+    "emptySource": "No items in this folder — right-click for options",
+    "loading": "Loading files..."
+  },
+  "contextMenu": {
+    "openFolder": "Open folder",
+    "transferFile": "Transfer to destination",
+    "transferFolder": "Transfer folder to destination",
+    "transferCurrent": "Transfer current folder to destination",
+    "copyS3Path": "Copy S3 path",
+    "copyObjectKey": "Copy object key",
+    "refresh": "Refresh",
+    "newFolder": "New folder...",
+    "newFolderHere": "New folder here...",
+    "goUp": "Go to parent folder",
+    "copyCurrentPath": "Copy current folder path",
+    "dropHint": "Drop items here to transfer"
+  },
+  "createFolder": {
+    "title": "New folder",
+    "nameLabel": "Folder name",
+    "namePlaceholder": "my-folder",
+    "preview": "Will be created at:"
+  },
+  "confirmTransfer": {
+    "title": "Confirm transfer",
+    "description": "The items below will be copied from source to destination:"
+  },
+  "transfer": {
+    "idle": "No transfer in progress. Drag items from source to destination.",
+    "progress": "Transfers: {{done}}/{{total}}",
+    "failures": "({{count}} failed)",
+    "cancel": "Cancel",
+    "status": {
+      "running": "In progress",
+      "completed": "Completed",
+      "failed": "Failed",
+      "cancelled": "Cancelled"
+    }
+  },
+  "profile": {
+    "title": "Connection profiles",
+    "editTitle": "Edit profile",
+    "name": "Name",
+    "provider": "Provider",
+    "aws": "AWS S3",
+    "oracle": "Oracle Cloud",
+    "accessKey": "Access Key ID",
+    "secretKey": "Secret Access Key",
+    "secretKeep": "(leave empty to keep)",
+    "region": "Region",
+    "regionPlaceholderAws": "us-east-1",
+    "regionPlaceholderOracle": "sa-saopaulo-1",
+    "namespace": "Namespace (tenancy)",
+    "manualBuckets": "Manual buckets (optional — one per line)",
+    "manualBucketsPlaceholder": "my-bucket\nother-bucket",
+    "testConnection": "Test connection",
+    "testing": "Testing...",
+    "testSuccess": "Connection tested successfully!",
+    "savedList": "Saved profiles"
+  },
+  "errors": {
+    "unknown": "Unknown error",
+    "listObjects": "Failed to list objects",
+    "listBuckets": "Failed to list buckets",
+    "accessBucket": "Failed to access bucket",
+    "createFolderSetup": "Select a profile and bucket before creating a folder",
+    "folderNameRequired": "Enter a folder name",
+    "profile": {
+      "nameRequired": "Name is required",
+      "accessKeyRequired": "Access Key is required",
+      "secretRequired": "Secret Key is required for new profiles",
+      "namespaceRequired": "Namespace is required for Oracle Cloud",
+      "secretForTest": "Enter Secret Key to test a new profile",
+      "saveFailed": "Failed to save profile",
+      "testFailed": "Connection test failed",
+      "secretRequiredSave": "Secret Access Key is required"
+    },
+    "folder": {
+      "nameRequired": "Folder name is required",
+      "invalidChars": "Folder name cannot contain \"/\""
+    },
+    "s3": {
+      "unknown": "S3 error: {{detail}}",
+      "noSuchBucketOracle": "Bucket \"{{bucket}}\" not found in namespace \"{{namespace}}\" (region {{region}}). Endpoint: {{endpoint}}. Check bucket name, region, compartment, and IAM permissions.",
+      "noSuchBucket": "Bucket \"{{bucket}}\" does not exist or access denied (region {{region}}).",
+      "accessDenied": "No permission to access \"{{bucket}}\". Check credentials and IAM policies.",
+      "invalidCredentials": "Invalid credentials. Check Access Key and Secret Key."
+    },
+    "transfer": {
+      "setupRequired": "Configure source and destination before transferring",
+      "inProgress": "A transfer is already in progress"
+    },
+    "profileNotFound": "Profile not found",
+    "oracleNamespace": "Namespace is required for Oracle Cloud"
+  },
+  "hints": {
+    "oracleEmptyBuckets": "No buckets returned by Oracle S3 API. Check namespace, region, IAM permissions and compartment. Add manual buckets in profile or type the name below.",
+    "oracleManualBuckets": "ListBuckets returned nothing; using manually configured buckets from profile."
+  }
+}
