@@ -1,0 +1,44 @@
+name: Auto Tag
+
+on:
+  push:
+    branches: [master, main]
+
+permissions:
+  contents: write
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Read version from package.json
+        id: version
+        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Check if tag already exists on remote
+        id: check
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          if git ls-remote --tags origin "refs/tags/v${VERSION}" | grep -q .; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Tag v${VERSION} já existe — nada a fazer."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "Tag v${VERSION} não existe — será criada."
+          fi
+
+      - name: Create and push tag
+        if: steps.check.outputs.exists == 'false'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "v${VERSION}" -m "Release v${VERSION}"
+          git push origin "v${VERSION}"
